@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
- /**
- * @fileoverview Experiment with untangling a node network.
- * 
- * @author Luis Mejia <lmejia@gmail.com>
- * 
- * @requires EXTERNAL:@link{https://p5js.org p5.js}
- * @requires p5-ext.js
- * @requires network-node.js
- */
+/**
+* @fileoverview Experiment with untangling a node network.
+* 
+* @author Luis Mejia <lmejia@gmail.com>
+* 
+* @requires EXTERNAL:@link{https://p5js.org p5.js}
+* @requires p5-ext.js
+* @requires network-node.js
+*/
 'use strict';
 
 class App {
@@ -111,15 +111,17 @@ class App {
         }
         // Update nodes.
         this.nodes.forEach(node => {
-            if ((untanglePair != null) && (node == untanglePair.target)) {
-                return;
-            }
-            const vectors = [ node.contain(this.fence) ];
-            if ((untanglePair != null) && movers.includes(node)) {
-                vectors.push(node.seek(untanglePair.target.position));
-            } else {
-                vectors.push(node.crowd());
-                vectors.push(node.separate(this.nodes));
+            const vectors = [node.contain(this.fence)];
+            // Untangle target is temporarily not affected by other behaviors.
+            if ((untanglePair == null) || (node != untanglePair.target)) {
+                if ((untanglePair != null) && movers.includes(node)) {
+                    // Untangle movers are temporarily not affected by other behaviors.
+                    // Instead, they seek the target.
+                    vectors.push(node.seek(untanglePair.target.position));
+                } else {
+                    vectors.push(node.crowd());
+                    vectors.push(node.separate(this.nodes));
+                }
             }
             const sum = createVector(0, 0);
             let count = 0;
